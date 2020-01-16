@@ -1,3 +1,11 @@
+##
+# List Videos
+# 
+# This is a one-time use script that uses the Youtube Data API to collect the video IDs and descriptions
+# of every video on the JRE Youtube channel into a csv file called videos.csv.
+# This csv file is used by the download_storyboard.py script to match an episode number to a Youtube video ID.
+##
+
 import requests
 from keys import youtubeKey # 'keys.py' file in same directory
 import json

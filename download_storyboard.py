@@ -1,5 +1,7 @@
 import requests
 import re
+import os
+import sys
 import json
 import math
 from pathlib import Path
@@ -9,6 +11,10 @@ def download_storyboard(video_id, episode_number):
     video_html = r.text
 
     match = re.findall(r'playerStoryboardSpecRenderer.*?(\{.+?\})', video_html)
+    if not match:
+        print('No storyboard available :(')
+        sys.exit(1)
+
     spec_json = match[0].replace(r'\\', '').replace('\\', '')
     spec = json.loads(spec_json)
     spec_url = spec['spec']
@@ -25,7 +31,7 @@ def download_storyboard(video_id, episode_number):
     http += '&sigh=' + sigh
 
     # Create directory for video storyboard images
-    storyboard_directory = 'storyboards/' + str(episode_number) + ' ' + video_id
+    storyboard_directory = os.path.join('storyboards', str(episode_number) + ' ' + video_id)
     Path(storyboard_directory).mkdir(parents=True, exist_ok=True)
 
     # Download storyboard images and put them in directory
@@ -39,4 +45,4 @@ def download_storyboard(video_id, episode_number):
 
 
 if __name__ == '__main__':
-    download_storyboard('RGLgfGT032s', 1410)
+    download_storyboard(sys.argv[2], int(sys.argv[1]))
