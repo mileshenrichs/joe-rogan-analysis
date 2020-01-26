@@ -18,12 +18,12 @@ RANGE_REFERENCES = {
     421: {
         'Joe': os.path.join('rogan_reference_images', '421to449_joe.jpg'),
         'Guest': os.path.join('rogan_reference_images', '421to449_guest.jpg'),
-        'Similarity Threshold': 21
+        'Similarity Threshold': 18
     },
     450: {
         'Joe': os.path.join('rogan_reference_images', '450to1290_joe.jpg'),
         'Guest': os.path.join('rogan_reference_images', '450to1290_guest.jpg'),
-        'Similarity Threshold': 21
+        'Similarity Threshold': 18
     }
 }
 

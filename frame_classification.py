@@ -19,13 +19,23 @@ def do_frame_classification(video_id):
         'OTHER': []
     }
 
+    # Merges clusters[child_cluster_index] into clusters[parent_cluster_index]
+    def do_cluster_merge(clusters, cluster_averages, child_cluster_index, parent_cluster_index):
+        # Copy frames from child cluster into parent
+        for child_frame in clusters[child_cluster_index][1]:
+            clusters[parent_cluster_index][1].append(child_frame)
+        # Delete child cluster
+        clusters.pop(child_cluster_index)
+        # Delete corresponding child cluster average
+        cluster_averages.pop(child_cluster_index)
+
     # The similarity clustering algorithm works decently well, but often splits what should be one big cluster
     # into one pretty big cluster and another smaller cluster.  We can merge these clusters by evaluating
     # the differences in cluster average hashes across all images in the cluster and merging the clusters
     # that have sufficiently similar average hashes.
     def merge_clusters(clusters):
         # Minimum size (number of frames) for a cluster to be considered for merge
-        CLUSTER_SIGNIFICANCE_MIN_SIZE = 4
+        CLUSTER_SIGNIFICANCE_MIN_SIZE = 3
 
         # Maximum Euclidean distance between two cluster average hashes for them to be merged
         CLUSTER_DISTANCE_THRESHOLD = 2.0
@@ -45,15 +55,21 @@ def do_frame_classification(video_id):
                 mean_array = avg_hash_array.mean(axis=0)
                 cluster_averages.append(mean_array)
 
+        # Merge similar clusters into first cluster
         print('\nComparing average of first cluster to averages of all other clusters:')
         for i, cluster in enumerate(cluster_averages):
             euclidian_distance = np.linalg.norm(cluster - cluster_averages[0])
             print(str(i+1) + ': ' + str(euclidian_distance))
+            if i != 0 and euclidian_distance <= CLUSTER_DISTANCE_THRESHOLD:
+                do_cluster_merge(clusters, cluster_averages, i, 0)
 
+        # Merge similar clusters into second cluster
         print('\nComparing average of second cluster to averages of all other clusters:')
         for i, cluster in enumerate(cluster_averages):
             euclidian_distance = np.linalg.norm(cluster - cluster_averages[1])
             print(str(i+1) + ': ' + str(euclidian_distance))
+            if i != 1 and euclidian_distance <= CLUSTER_DISTANCE_THRESHOLD:
+                do_cluster_merge(clusters, cluster_averages, i, 1)
 
     # Groups similar images together.  Most images should fall into either the 'JOE_ROGAN' or 'GUEST' pool.
     # Any images that do

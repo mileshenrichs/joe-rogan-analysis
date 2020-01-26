@@ -13,8 +13,7 @@ def download_storyboard(video_id, episode_number):
     match = re.findall(r'playerStoryboardSpecRenderer.*?(\{.+?\})', video_html)
     if not match:
         print('No storyboard available :(')
-        sys.exit(1)
-
+        return
     spec_json = match[0].replace(r'\\', '').replace('\\', '')
     spec = json.loads(spec_json)
     spec_url = spec['spec']
