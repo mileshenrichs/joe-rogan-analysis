@@ -2,4 +2,4 @@ __pycache__/
 keys.py
 videos.csv
 storyboards/
-video_guest_labels.csv
+video_guest_labels*.csv
